@@ -1,0 +1,15 @@
+
+@hostname = http://localhost:3000
+GET {{hostname}}/api/public/auth
+
+###
+
+POST {{hostname}}/api/public/auth
+content-type: application/json
+
+{
+	"nom": "test",
+	"prenom": "test",
+	"email": "tetst@test.test",
+	"password": "test"
+} 
