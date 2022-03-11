@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CompoPlatIngredientEntity } from 'src/entities/compoPlatIngredient.entity';
+import { EnergyCost, EnergyCostEntity } from 'src/entities/energyCost.entity';
+import { Ingredient, IngredientEntity } from 'src/entities/ingredients.entity';
+import { Meal, MealEntity } from 'src/entities/meals.entity';
+import { SubGroupEntity } from 'src/entities/subGroup.entity';
 import { Like, Repository } from 'typeorm';
 
-import { Meal, MealEntity, SubGroupEntity } from './entities/meal.entity';
+
+
 
 @Injectable()
 export class MealsService {
@@ -11,7 +17,13 @@ export class MealsService {
 		@InjectRepository(MealEntity)
 		private mealRepository: Repository<MealEntity>,
 		@InjectRepository(SubGroupEntity)
-		private subGroupRepository: Repository<SubGroupEntity>
+		private subGroupRepository: Repository<SubGroupEntity>,
+		@InjectRepository(CompoPlatIngredientEntity)
+		private compoRepository: Repository<CompoPlatIngredientEntity>,
+		@InjectRepository(IngredientEntity)
+		private ingredientRepository: Repository<IngredientEntity>,
+		@InjectRepository(EnergyCostEntity)
+		private energyCostRepository: Repository<EnergyCostEntity>,
 	) { }
 
 	async getAllMeal(): Promise<any> {
@@ -20,8 +32,10 @@ export class MealsService {
 		return meals;
 	}
 
-	async getOneMealById(id: number): Promise<MealEntity> {
-		return this.mealRepository.findOne(id);//TODO Liaison à la main si pas de relation OneTO One possible 
+	async getOneMealById(id: number): Promise<Meal> {
+		const mealEntity = await this.mealRepository.findOne(id);
+		const meal = await this._generateMeals([mealEntity]);
+		return meal[0];
 	}
 
 	async getMealsByName(name) {
@@ -31,16 +45,49 @@ export class MealsService {
 	}
 
 	/**
-	 * Generate Meal from MealEntity
-	 * @param MealEntityList 
-	 * @returns 
+	 * Generate Meals from MealEntities
 	 */
 	private async _generateMeals(MealEntityList: MealEntity[]): Promise<Meal[]> {
 		const meals = []
+
 		for (let i = 0; i < MealEntityList.length; i++) {
 			const mealEntity = MealEntityList[i];
-			const subGroup = await this.subGroupRepository.findOne(mealEntity.sous_groupe_id)
-			meals.push(new Meal(mealEntity.id, mealEntity.nom, subGroup, mealEntity.cout_autre_etape));
+			// generation du subgroup
+			const subGroup = await this.subGroupRepository.findOne(mealEntity.sous_groupe_id);
+
+			//generation ingredients
+			const compoPlatIngredient = await this.compoRepository.find({ where: { plat_id: mealEntity.id } });
+			const ingredients = []
+			for (let t = 0; t < compoPlatIngredient.length; t++) {
+				const compo = compoPlatIngredient[t];
+				const ingredientEntity = await this.ingredientRepository.findOne(compo.ingredient_id);
+				ingredients.push(ingredientEntity)
+				console.log('ingredientEntity is :', ingredientEntity)
+			}
+
+			//ajout des sous catégorie de ingredients
+			const ingredientsMap = []
+			for (let y = 0; y < ingredients.length; y++) {
+				const ingredient = ingredients[y];
+				const ingredientSubGroup = await this.subGroupRepository.findOne(ingredient.sous_groupe_id);
+				const ingredientEnergyCost = await this.energyCostRepository.findOne(ingredient.cout_energetique_id);
+				const energyCost = new EnergyCost(ingredientEnergyCost.id,
+					parseFloat(ingredientEnergyCost.agriculture),
+					parseFloat(ingredientEnergyCost.transformation),
+					parseFloat(ingredientEnergyCost.emballage),
+					parseFloat(ingredientEnergyCost.transport),
+					parseFloat(ingredientEnergyCost.supermarche),
+					parseFloat(ingredientEnergyCost.consommation))
+
+				ingredientsMap.push(new Ingredient(ingredient.id,
+					ingredient.nom,
+					ingredient.dqr,
+					ingredientSubGroup,
+					energyCost
+				));
+			}
+
+			meals.push(new Meal(mealEntity.id, mealEntity.nom, subGroup, ingredientsMap, mealEntity.cout_autre_etape));
 		}
 		return meals;
 	}

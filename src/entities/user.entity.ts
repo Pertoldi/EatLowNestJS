@@ -1,8 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('plat')
+@Entity('utilisateur')
 export class IngredientEntity {
-
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -10,11 +9,11 @@ export class IngredientEntity {
 	nom: string;
 
 	@Column()
-	dqr: number;
+	prenom: number;
 
 	@Column()
-	cout_energetique_id: number;
+	email: number;
 
 	@Column()
-	sous_groupe_id: number;
+	password: number;
 }
