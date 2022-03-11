@@ -8,7 +8,7 @@ export class MealsController {
 
 	@Get()
 	getAllMeal() {
-		return this.mealsService.getAllMeal();
+		return this.mealsService.getAllMeals();
 	}
 
 	@Get(':id')
@@ -17,8 +17,9 @@ export class MealsController {
 	}
 
 	@Get('/search/:name')
-	async getMealsByName(@Param('name') name: string) {
+	getMealsByName(@Param('name') name: string) {
 		return this.mealsService.getMealsByName(name);
 	}
 
+	//TODO pas très important, faire la route /ByIngredients/:id
 }

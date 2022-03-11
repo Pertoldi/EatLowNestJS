@@ -21,7 +21,7 @@ export class EnergyCostEntity {
 	@Column()
 	supermarche: string;
 
-	@Column("decimal")
+	@Column()
 	consommation: string;
 }
 
