@@ -20,6 +20,4 @@ export class MealsController {
 	getMealsByName(@Param('name') name: string) {
 		return this.mealsService.getMealsByName(name);
 	}
-
-	//TODO pas très important, faire la route /ByIngredients/:id
 }
