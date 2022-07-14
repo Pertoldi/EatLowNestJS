@@ -11,11 +11,11 @@ dotenv.config();
   imports: [UsersModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'eatlow',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT, 10),
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       entities: ["dist/**/*.entity{.ts,.js}"],//Ce sont les class TS qui vont être les images de nos tables au niveau de la DB.
       synchronize: false, //true -> update DB to match our entity
     }),
@@ -25,4 +25,5 @@ dotenv.config();
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
+// import { Module } from '@nestjs/common';

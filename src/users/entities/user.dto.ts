@@ -19,3 +19,34 @@ export class UserDto {
 	@MinLength(4)
 	password: string;
 }
+
+export class FrontUserDto {
+	@IsNotEmpty()
+	@IsString()
+	lastname: string;
+
+	@IsNotEmpty()
+	@IsString()
+	firstname: string;
+
+	@IsNotEmpty()
+	@IsString()
+	email: string;
+
+	@IsNotEmpty()
+	@IsString()
+	@MinLength(4)
+	password: string;
+}
+
+export class UserLoginDto {
+
+	@IsNotEmpty()
+	@IsString()
+	email: string;
+
+	@IsNotEmpty()
+	@IsString()
+	@MinLength(3)
+	password: string;
+}

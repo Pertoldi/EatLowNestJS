@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 
-import { UserDto } from './entities/user.dto';
+import { FrontUserDto, UserDto, UserLoginDto } from './entities/user.dto';
 import { UsersService } from './users.service';
 
 @Controller('api/public/auth')
@@ -8,21 +8,26 @@ export class UsersController {
 
 	constructor(private readonly usersService: UsersService) { }
 
-	@Get('test')
-	helloWorld() {
-		return this.usersService.getHelloWorld();
-	}
-
 	@Get()
 	async getAllUser() {
 		return await this.usersService.getAllUser();
 	}
 
-	@Post()
+	// @Post('/login')
+	// async login(
+	// 	@Body() user: UserLoginDto
+	// ) {
+	// 	return await this.usersService.login(user);
+	// }
+
+	@Post('/register')
 	async addUser(
-		@Body() user: UserDto
+		@Body() user: FrontUserDto
 	) {
-		return await this.usersService.addUser(user);
+		console.log('user from register is :', user)
+		const userDto: UserDto = { nom: user.lastname, prenom: user.firstname, email: user.email, password: user.password }
+		console.log('userDto is :', userDto)
+		return await this.usersService.addUser(userDto);
 	}
 
 	@Post('isTokenValid')

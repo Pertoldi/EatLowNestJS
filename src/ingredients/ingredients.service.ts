@@ -36,8 +36,8 @@ export class IngredientsService {
 	}
 
 	/**
- * Generate Ingredients from IngredientEntities
- */
+	 * Generate Ingredients from IngredientEntities
+	 */
 	private async _generateIngredients(ingredientEntityList: IngredientEntity[]): Promise<Ingredient[]> {
 		const ingredients = [];
 		for (let i = 0; i < ingredientEntityList.length; i++) {
@@ -61,7 +61,6 @@ export class IngredientsService {
 				energyCost
 			));
 		}
-
 		return ingredients;
 	}
 }

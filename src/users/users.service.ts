@@ -12,15 +12,15 @@ export class UsersService {
 		private userRepository: Repository<UserEntity>
 	) { }
 
-	getHelloWorld() {
-		return 'Hello World';
-	}
-
 	async getAllUser(): Promise<UserEntity[]> {
 		return await this.userRepository.find();
 	}
 
 	async addUser(user: UserDto): Promise<UserEntity> {
 		return await this.userRepository.save(user);
+	}
+
+	async getOneUserById(id: number): Promise<UserEntity> {
+		return await this.userRepository.findOne(id);
 	}
 }
