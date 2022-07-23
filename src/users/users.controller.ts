@@ -48,7 +48,7 @@ export class UsersController {
 	isTokenValid(
 		@Body() token: string
 	) {
-		jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+		jwt.verify(token, process.env.TOKEN_SECRET, (err) => {
 			if (err) {
 				return false
 			} else {
